@@ -10,6 +10,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 const catList = document.getElementById('catList');
 const pagination = document.getElementById('pagination');
+const modal = document.getElementById('modal');
+const closeModalIcon = document.getElementById('closeModalIcon');
+const modalImage = document.getElementById('modalImage');
 const currentPage = 1;
 const itemsPerPage = 9;
 // GET
@@ -32,6 +35,9 @@ const createCatCard = (page) => __awaiter(void 0, void 0, void 0, function* () {
         const catImage = document.createElement('img');
         catItem.className =
             'cursor-pointer rounded-md flex flex-col p-1 items-center w-30 h-30 md:w-60 md:h-60 border border-gray-300 hover:scale-105 transition-all';
+        catItem.onclick = () => {
+            openModal(cat.url);
+        };
         catImage.src = cat.url;
         catImage.alt = '고양이 사진';
         catImage.className = 'w-full rounded-t-md h-20 md:h-40 object-cover';
@@ -58,6 +64,21 @@ const updatePagination = (currentPage) => {
             createCatCard(currentPage);
         });
         pagination.appendChild(button);
+    }
+};
+// 모달
+const openModal = (imageUrl) => {
+    modalImage.src = imageUrl;
+    modal.classList.remove('hidden');
+};
+const closeModal = () => {
+    modal.classList.add('hidden');
+};
+closeModalIcon.onclick = closeModal;
+// modal: 모달배경이기 때문에 배경을 클릭한 경우 모달 닫기
+modal.onclick = (e) => {
+    if (e.target === modal) {
+        closeModal();
     }
 };
 createCatCard(currentPage);
