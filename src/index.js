@@ -10,11 +10,64 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 const catList = document.getElementById('catList');
 const pagination = document.getElementById('pagination');
+const currentPage = 1;
+const itemsPerPage = 9;
 const modal = document.getElementById('modal');
 const closeModalIcon = document.getElementById('closeModalIcon');
 const modalImage = document.getElementById('modalImage');
-const currentPage = 1;
-const itemsPerPage = 9;
+const tagInput = document.getElementById('tagInput');
+const addTagButton = document.getElementById('addTagButton');
+const tagList = document.getElementById('tagList');
+const tags = [];
+let currentCatId = null;
+// 로컬스토리지에서 특정 id에 대한 태그 가져오기
+const getTag = (id) => {
+    const storedTags = localStorage.getItem(id);
+    return storedTags ? JSON.parse(storedTags) : [];
+};
+// 로컬스토리지에 특정 id에 대한 태그 저장하기
+const postTag = (id, tag) => {
+    localStorage.setItem(id, JSON.stringify(tags));
+};
+// 초기 태그값
+const getInitialTags = (id) => {
+    const initialTags = getTag(id);
+    initialTags.forEach((tag) => {
+        addTag(tag);
+    });
+};
+// 태그 추가 + 삭제
+addTagButton.addEventListener('click', () => {
+    const tagValue = tagInput.value.trim();
+    if (tagValue) {
+        addTag(tagValue);
+    }
+});
+const addTag = (tagValue) => {
+    if (!currentCatId)
+        return;
+    tags.push(tagValue);
+    const tagElement = document.createElement('span');
+    tagElement.textContent = `#${tagValue}`;
+    tagElement.className =
+        'border border-gray-300 text-gray-500 rounded-full px-2 py-1 relative inline-block mr-4 mb-2';
+    // 태그 삭제
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = 'x';
+    deleteButton.className =
+        'absolute -top-2 -right-3 text-white rounded-full bg-blue-500 w-6 h-6 flex items-center justify-center p-1';
+    deleteButton.addEventListener('click', () => {
+        if (!currentCatId)
+            return;
+        tags.splice(tags.indexOf(tagValue), 1);
+        tagList.removeChild(tagElement);
+        postTag(currentCatId, tags);
+    });
+    tagElement.appendChild(deleteButton);
+    tagList.appendChild(tagElement);
+    tagInput.value = '';
+    postTag(currentCatId, tags);
+};
 // GET
 const getCats = (page) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -29,19 +82,32 @@ const getCats = (page) => __awaiter(void 0, void 0, void 0, function* () {
 // 고양이 카드 띄우기
 const createCatCard = (page) => __awaiter(void 0, void 0, void 0, function* () {
     const cats = yield getCats(page);
-    catList.innerHTML = ''; // 이전 카드 지우기
+    catList.innerHTML = '';
     cats.slice(0, 9).forEach((cat) => {
         const catItem = document.createElement('div');
         const catImage = document.createElement('img');
         catItem.className =
             'cursor-pointer rounded-md flex flex-col p-1 items-center w-30 h-30 md:w-60 md:h-60 border border-gray-300 hover:scale-105 transition-all';
         catItem.onclick = () => {
+            currentCatId = cat.id;
+            tagList.innerHTML = '';
+            tags.splice(0, tags.length);
+            getInitialTags(currentCatId);
             openModal(cat.url);
         };
         catImage.src = cat.url;
         catImage.alt = '고양이 사진';
         catImage.className = 'w-full rounded-t-md h-20 md:h-40 object-cover';
         catItem.appendChild(catImage);
+        // 기존 태그 가져오기 및 카드에 추가
+        const existingTags = getTag(cat.id);
+        existingTags.forEach((tag) => {
+            const tagElement = document.createElement('span');
+            tagElement.textContent = `#${tag}`;
+            tagElement.className =
+                'border border-gray-300 text-gray-500 rounded-full px-2 py-1 inline-block mr-2 mb-2';
+            catItem.appendChild(tagElement);
+        });
         catList === null || catList === void 0 ? void 0 : catList.appendChild(catItem);
     });
     updatePagination(page);
