@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,6 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { randomTags } from './randomTags.js';
 const catList = document.getElementById('catList');
 const pagination = document.getElementById('pagination');
 const currentPage = 1;
@@ -99,15 +99,33 @@ const createCatCard = (page) => __awaiter(void 0, void 0, void 0, function* () {
         catImage.alt = '고양이 사진';
         catImage.className = 'w-full rounded-t-md h-20 md:h-40 object-cover';
         catItem.appendChild(catImage);
-        // 기존 태그 가져오기 및 카드에 추가
+        const tagContainer = document.createElement('div');
+        tagContainer.className = 'mt-2 flex flex-wrap';
         const existingTags = getTag(cat.id);
-        existingTags.forEach((tag) => {
-            const tagElement = document.createElement('span');
-            tagElement.textContent = `#${tag}`;
-            tagElement.className =
-                'border border-gray-300 text-gray-500 rounded-full px-2 py-1 inline-block mr-2 mb-2';
-            catItem.appendChild(tagElement);
-        });
+        // 기존 태그가 있는지 확인
+        if (existingTags.length > 0) {
+            existingTags.forEach((tag) => {
+                const tagElement = document.createElement('span');
+                tagElement.textContent = `#${tag}`;
+                tagElement.className =
+                    'border border-gray-300 text-gray-500 rounded-full px-2 py-1 mr-2 mb-2';
+                tagContainer.appendChild(tagElement);
+            });
+        }
+        else {
+            // 기존 태그가 없으면 랜덤 태그 생성
+            const initialRandomTags = randomTags(3);
+            initialRandomTags.forEach((tag) => {
+                const tagElement = document.createElement('span');
+                tagElement.textContent = `#${tag}`;
+                tagElement.className =
+                    'border border-gray-300 text-gray-500 rounded-full px-2 py-1 mr-2 mb-2';
+                tagContainer.appendChild(tagElement);
+            });
+            tags.push(...initialRandomTags);
+            postTag(cat.id, tags);
+        }
+        catItem.appendChild(tagContainer);
         catList === null || catList === void 0 ? void 0 : catList.appendChild(catItem);
     });
     updatePagination(page);

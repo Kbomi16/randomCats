@@ -1,3 +1,5 @@
+import { randomTags } from './randomTags.js'
+
 const catList = document.getElementById('catList') as HTMLElement
 
 const pagination = document.getElementById('pagination') as HTMLElement
@@ -110,16 +112,34 @@ const createCatCard = async (page: number) => {
     catImage.className = 'w-full rounded-t-md h-20 md:h-40 object-cover'
     catItem.appendChild(catImage)
 
-    // 기존 태그 가져오기 및 카드에 추가
-    const existingTags = getTag(cat.id)
-    existingTags.forEach((tag: string) => {
-      const tagElement = document.createElement('span')
-      tagElement.textContent = `#${tag}`
-      tagElement.className =
-        'border border-gray-300 text-gray-500 rounded-full px-2 py-1 inline-block mr-2 mb-2'
-      catItem.appendChild(tagElement)
-    })
+    const tagContainer = document.createElement('div')
+    tagContainer.className = 'mt-2 flex flex-wrap'
 
+    const existingTags = getTag(cat.id)
+    // 기존 태그가 있는지 확인
+    if (existingTags.length > 0) {
+      existingTags.forEach((tag: string) => {
+        const tagElement = document.createElement('span')
+        tagElement.textContent = `#${tag}`
+        tagElement.className =
+          'border border-gray-300 text-gray-500 rounded-full px-2 py-1 mr-2 mb-2'
+        tagContainer.appendChild(tagElement)
+      })
+    } else {
+      // 기존 태그가 없으면 랜덤 태그 생성
+      const initialRandomTags = randomTags(3)
+      initialRandomTags.forEach((tag) => {
+        const tagElement = document.createElement('span')
+        tagElement.textContent = `#${tag}`
+        tagElement.className =
+          'border border-gray-300 text-gray-500 rounded-full px-2 py-1 mr-2 mb-2'
+        tagContainer.appendChild(tagElement)
+      })
+      tags.push(...initialRandomTags)
+      postTag(cat.id, tags)
+    }
+
+    catItem.appendChild(tagContainer)
     catList?.appendChild(catItem)
   })
   updatePagination(page)
