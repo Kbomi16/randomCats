@@ -35,7 +35,9 @@
             <h2>
               <!-- 고양이 제목 -->
             </h2>
-            <span id="closeModalIcon" class="cursor-pointer text-black">X</span>
+            <span id="closeModalIcon" class="cursor-pointer text-black"
+              >✖️</span
+            >
           </div>
           <img id="modalImage" class="mx-auto block object-cover" />
           <!-- 모달 안의 태그 -->
@@ -52,6 +54,22 @@
             >
               +
             </button>
+          </div>
+          <!-- 좋아요 -->
+          <div id="heartContainer" class="flex items-center gap-1">
+            <button id="likeButton">
+              <img
+                src="./assets/icons/heart.png"
+                alt="빈 하트"
+                class="size-6"
+              />
+              <img
+                src="./assets/icons/heartFilled.png"
+                alt="채워진 하트"
+                class="hidden size-6"
+              />
+            </button>
+            <span id="likeCount">0</span>
           </div>
           <div id="tagList" class="mt-4"></div>
         </div>

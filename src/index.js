@@ -20,6 +20,27 @@ const addTagButton = document.getElementById('addTagButton');
 const tagList = document.getElementById('tagList');
 const tags = [];
 let currentCatId = null;
+const likeButton = document.getElementById('likeButton');
+const likeCountDisplay = document.getElementById('likeCount');
+const filledHeart = likeButton.querySelector('img[alt="채워진 하트"]');
+const emptyHeart = likeButton.querySelector('img[alt="빈 하트"]');
+let likeCount = 0;
+let isLiked = false;
+// 좋아요 누르기
+likeButton.addEventListener('click', () => {
+    isLiked = !isLiked;
+    if (isLiked) {
+        likeCount += 1;
+        filledHeart.classList.remove('hidden');
+        emptyHeart.classList.add('hidden');
+    }
+    else {
+        likeCount -= 1;
+        filledHeart.classList.add('hidden');
+        emptyHeart.classList.remove('hidden');
+    }
+    likeCountDisplay.textContent = likeCount.toString();
+});
 // 로컬스토리지에서 특정 id에 대한 태그 가져오기
 const getTag = (id) => {
     const storedTags = localStorage.getItem(id);
