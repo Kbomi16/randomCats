@@ -116,7 +116,7 @@ const createCatCard = (page) => __awaiter(void 0, void 0, void 0, function* () {
             tagList.innerHTML = '';
             tags.splice(0, tags.length);
             getInitialTags(currentCatId);
-            openModal(cat.url);
+            openModal(cat.url, cat.id, tags);
         };
         catImage.src = cat.url;
         catImage.alt = '고양이 사진';
@@ -175,8 +175,10 @@ const updatePagination = (currentPage) => {
     }
 };
 // 모달
-const openModal = (imageUrl) => {
+const openModal = (imageUrl, catId, tags) => {
     modalImage.src = imageUrl;
+    const modalTitle = document.querySelector('#modal h2');
+    modalTitle.textContent = `😺 ${catId} | ${tags[0]} 고양이`;
     modal.classList.remove('hidden');
 };
 const closeModal = () => {

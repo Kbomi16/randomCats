@@ -132,7 +132,7 @@ const createCatCard = async (page: number) => {
       tagList.innerHTML = ''
       tags.splice(0, tags.length)
       getInitialTags(currentCatId)
-      openModal(cat.url)
+      openModal(cat.url, cat.id, tags)
     }
 
     catImage.src = cat.url
@@ -200,8 +200,11 @@ const updatePagination = (currentPage: number) => {
 }
 
 // 모달
-const openModal = (imageUrl: string) => {
+const openModal = (imageUrl: string, catId: string, tags: string[]) => {
   modalImage.src = imageUrl
+  const modalTitle = document.querySelector('#modal h2') as HTMLElement
+  modalTitle.textContent = `😺 ${catId} | ${tags[0]} 고양이`
+
   modal.classList.remove('hidden')
 }
 
