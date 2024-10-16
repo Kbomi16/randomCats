@@ -1,15 +1,12 @@
 import { getCats } from './ts/api.js'
 import { handleLike } from './ts/handleLike.js'
+import { openModal } from './ts/modal.js'
 import { updatePagination } from './ts/pagination.js'
 import { randomTags } from './utils/randomTags.js'
 
 const catList = document.getElementById('catList') as HTMLElement
 
 const currentPage = 1
-
-const modal = document.getElementById('modal') as HTMLElement
-const closeModalIcon = document.getElementById('closeModalIcon') as HTMLElement
-const modalImage = document.getElementById('modalImage') as HTMLImageElement
 
 const tagInput = document.getElementById('tagInput') as HTMLInputElement
 const addTagButton = document.getElementById(
@@ -163,27 +160,6 @@ const createCatCard = async (page: number) => {
     catList?.appendChild(catItem)
   })
   updatePagination(page, createCatCard)
-}
-
-// 모달
-const openModal = (imageUrl: string, catId: string, tags: string[]) => {
-  modalImage.src = imageUrl
-  const modalTitle = document.querySelector('#modal h2') as HTMLElement
-  modalTitle.textContent = `😺 ${catId} | ${tags[0]} 고양이`
-
-  modal.classList.remove('hidden')
-}
-
-const closeModal = () => {
-  modal.classList.add('hidden')
-}
-
-closeModalIcon.onclick = closeModal
-// modal: 모달배경이기 때문에 배경을 클릭한 경우 모달 닫기
-modal.onclick = (e) => {
-  if (e.target === modal) {
-    closeModal()
-  }
 }
 
 // 태그 검색 기능
