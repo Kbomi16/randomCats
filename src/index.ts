@@ -1,3 +1,4 @@
+import { handleLike } from './ts/handleLike.js'
 import { randomTags } from './utils/randomTags.js'
 
 const catList = document.getElementById('catList') as HTMLElement
@@ -19,37 +20,8 @@ const tags: string[] = []
 
 let currentCatId: string | null = null
 
-const likeButton = document.getElementById('likeButton') as HTMLButtonElement
-const likeCountDisplay = document.getElementById('likeCount') as HTMLElement
-const filledHeart = likeButton.querySelector(
-  'img[alt="채워진 하트"]',
-) as HTMLImageElement
-const emptyHeart = likeButton.querySelector(
-  'img[alt="빈 하트"]',
-) as HTMLImageElement
-
-let likeCount = 0
-let isLiked = false
-
 const tagSearchInput = document.getElementById('tagSearch') as HTMLElement
 const loading = document.getElementById('loading') as HTMLElement
-const tagResults = document.getElementById('tagResults') as HTMLElement
-
-// 좋아요 누르기
-likeButton.addEventListener('click', () => {
-  isLiked = !isLiked
-
-  if (isLiked) {
-    likeCount += 1
-    filledHeart.classList.remove('hidden')
-    emptyHeart.classList.add('hidden')
-  } else {
-    likeCount -= 1
-    filledHeart.classList.add('hidden')
-    emptyHeart.classList.remove('hidden')
-  }
-  likeCountDisplay.textContent = likeCount.toString()
-})
 
 // 로컬스토리지에서 특정 id에 대한 태그 가져오기
 const getTag = (id: string) => {
@@ -268,14 +240,44 @@ const searchCatsByTag = async (tag: string) => {
     const cats = await response.json()
     catList.innerHTML = ''
 
-    cats.forEach((cat: { url: string }) => {
-      const catItem = document.createElement('div')
-      catItem.className = 'cat-item'
-      catItem.innerHTML = `
-                <img src="${cat.url}" alt="고양이 사진" />
-                <span>#${tag}</span>
-            `
-      catList.appendChild(catItem)
+    // 9개만 보여주기 위해 slice 사용
+    cats.slice(0, 9).forEach((cat: { id: string; url: string }) => {
+      const catItem = document.createElement('div') as HTMLDivElement
+      const catImage = document.createElement('img') as HTMLImageElement
+
+      catItem.setAttribute('data-catId', cat.id)
+      catItem.className =
+        'cursor-pointer rounded-md flex flex-col p-1 items-center w-30 h-fit md:w-70 border border-gray-300 hover:scale-105 transition-all'
+      catItem.onclick = () => {
+        currentCatId = cat.id
+        tagList.innerHTML = ''
+        tags.splice(0, tags.length)
+        getInitialTags(currentCatId)
+        openModal(cat.url, cat.id, tags)
+      }
+
+      catImage.src = cat.url
+      catImage.alt = '고양이 사진'
+      catImage.className = 'w-full rounded-t-md h-20 md:h-60 object-cover'
+      catItem.appendChild(catImage)
+
+      const tagContainer = document.createElement('div') as HTMLDivElement
+      tagContainer.className = 'tagContainer mt-2 flex flex-wrap'
+
+      const existingTags = getTag(cat.id)
+      existingTags.forEach((tag: string) => {
+        const tagElement = document.createElement('span') as HTMLSpanElement
+        tagElement.textContent = `#${tag}`
+        tagElement.className =
+          'border border-gray-300 text-gray-500 rounded-full px-2 py-1 mr-2 mb-2 text-xs'
+        tagContainer.appendChild(tagElement)
+        tags.push(...existingTags)
+      })
+
+      if (catItem) {
+        catItem.appendChild(tagContainer)
+      }
+      catList?.appendChild(catItem)
     })
   } catch (error) {
     console.log('고양이 목록 검색 실패', error)
@@ -301,3 +303,4 @@ tagSearchInput.addEventListener('input', (e) => {
 })
 
 createCatCard(currentPage)
+handleLike()
