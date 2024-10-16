@@ -26,6 +26,9 @@ const filledHeart = likeButton.querySelector('img[alt="채워진 하트"]');
 const emptyHeart = likeButton.querySelector('img[alt="빈 하트"]');
 let likeCount = 0;
 let isLiked = false;
+const tagSearchInput = document.getElementById('tagSearch');
+const loading = document.getElementById('loading');
+const tagResults = document.getElementById('tagResults');
 // 좋아요 누르기
 likeButton.addEventListener('click', () => {
     isLiked = !isLiked;
@@ -114,6 +117,7 @@ const updateCatTag = (catId) => {
 // GET
 const getCats = (page) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        loading.classList.remove('hidden');
         const response = yield fetch(`https://api.thecatapi.com/v1/images/search?limit=${itemsPerPage}&page=${page}`);
         const cats = yield response.json();
         return cats;
@@ -121,8 +125,11 @@ const getCats = (page) => __awaiter(void 0, void 0, void 0, function* () {
     catch (error) {
         console.log('고양이 목록 가져오기 실패', error);
     }
+    finally {
+        loading.classList.add('hidden');
+    }
 });
-// 고양이 카드 띄우기
+// 고양이 카드 생성
 const createCatCard = (page) => __awaiter(void 0, void 0, void 0, function* () {
     const cats = yield getCats(page);
     catList.innerHTML = '';
@@ -212,4 +219,44 @@ modal.onclick = (e) => {
         closeModal();
     }
 };
+// 태그 검색 기능
+let timeoutId;
+const searchCatsByTag = (tag) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        loading.classList.remove('hidden');
+        const response = yield fetch(`https://api.thecatapi.com/v1/images/search?limit=9&page=0`);
+        const cats = yield response.json();
+        catList.innerHTML = '';
+        cats.forEach((cat) => {
+            const catItem = document.createElement('div');
+            catItem.className = 'cat-item';
+            catItem.innerHTML = `
+                <img src="${cat.url}" alt="고양이 사진" />
+                <span>#${tag}</span>
+            `;
+            catList.appendChild(catItem);
+        });
+    }
+    catch (error) {
+        console.log('고양이 목록 검색 실패', error);
+        alert('고양이 목록을 가져오는 데 실패했습니다. 다시 시도해 주세요.');
+    }
+    finally {
+        loading.classList.add('hidden');
+    }
+});
+// 태그 검색 이벤트 리스너
+tagSearchInput.addEventListener('input', (e) => {
+    const query = e.target.value.trim();
+    clearTimeout(timeoutId);
+    if (query) {
+        timeoutId = setTimeout(() => {
+            searchCatsByTag(query);
+        }, 300);
+    }
+    else {
+        catList.innerHTML = '';
+        createCatCard(currentPage);
+    }
+});
 createCatCard(currentPage);

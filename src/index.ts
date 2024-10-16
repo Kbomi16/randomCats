@@ -31,6 +31,10 @@ const emptyHeart = likeButton.querySelector(
 let likeCount = 0
 let isLiked = false
 
+const tagSearchInput = document.getElementById('tagSearch') as HTMLElement
+const loading = document.getElementById('loading') as HTMLElement
+const tagResults = document.getElementById('tagResults') as HTMLElement
+
 // 좋아요 누르기
 likeButton.addEventListener('click', () => {
   isLiked = !isLiked
@@ -132,6 +136,7 @@ const updateCatTag = (catId: string) => {
 // GET
 const getCats = async (page: number) => {
   try {
+    loading.classList.remove('hidden')
     const response = await fetch(
       `https://api.thecatapi.com/v1/images/search?limit=${itemsPerPage}&page=${page}`,
     )
@@ -140,10 +145,12 @@ const getCats = async (page: number) => {
     return cats
   } catch (error) {
     console.log('고양이 목록 가져오기 실패', error)
+  } finally {
+    loading.classList.add('hidden')
   }
 }
 
-// 고양이 카드 띄우기
+// 고양이 카드 생성
 const createCatCard = async (page: number) => {
   const cats = await getCats(page)
   catList.innerHTML = ''
@@ -247,5 +254,50 @@ modal.onclick = (e) => {
     closeModal()
   }
 }
+
+// 태그 검색 기능
+let timeoutId: number
+
+const searchCatsByTag = async (tag: string) => {
+  try {
+    loading.classList.remove('hidden')
+    const response = await fetch(
+      `https://api.thecatapi.com/v1/images/search?limit=9&page=0`,
+    )
+
+    const cats = await response.json()
+    catList.innerHTML = ''
+
+    cats.forEach((cat: { url: string }) => {
+      const catItem = document.createElement('div')
+      catItem.className = 'cat-item'
+      catItem.innerHTML = `
+                <img src="${cat.url}" alt="고양이 사진" />
+                <span>#${tag}</span>
+            `
+      catList.appendChild(catItem)
+    })
+  } catch (error) {
+    console.log('고양이 목록 검색 실패', error)
+    alert('고양이 목록을 가져오는 데 실패했습니다. 다시 시도해 주세요.')
+  } finally {
+    loading.classList.add('hidden')
+  }
+}
+
+// 태그 검색 이벤트 리스너
+tagSearchInput.addEventListener('input', (e) => {
+  const query = (e.target as HTMLInputElement).value.trim()
+  clearTimeout(timeoutId)
+
+  if (query) {
+    timeoutId = setTimeout(() => {
+      searchCatsByTag(query)
+    }, 300)
+  } else {
+    catList.innerHTML = ''
+    createCatCard(currentPage)
+  }
+})
 
 createCatCard(currentPage)

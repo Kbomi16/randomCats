@@ -15,9 +15,12 @@
       <!-- 고양이 검색 -->
       <input
         type="text"
-        placeholder="고양이를 검색하세요."
+        id="tagSearch"
+        placeholder="태그로 고양이를 검색하세요."
         class="my-4 w-full max-w-md rounded-md border border-gray-300 px-4 py-2 outline-none transition-all focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
       />
+      <div id="loading" class="hidden">로딩 중...</div>
+      <div id="tagResults"></div>
       <!-- 고양이 리스트 -->
       <div
         id="catList"
