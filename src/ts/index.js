@@ -7,12 +7,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { API_URL } from './constants/API_URL.js';
-import { getCats } from './ts/api.js';
-import { handleLike } from './ts/handleLike.js';
-import { openModal } from './ts/modal.js';
-import { updatePagination } from './ts/pagination.js';
-import { randomTags } from './utils/randomTags.js';
+import { getCats } from './api.js';
+import { handleLike } from './handleLike.js';
+import { openModal } from './modal.js';
+import { updatePagination } from './pagination.js';
+import { randomTags } from '../utils/randomTags.js';
+const API_URL = 'https://api.thecatapi.com/v1/images/search';
 const catList = document.getElementById('catList');
 const currentPage = 1;
 const tagInput = document.getElementById('tagInput');
