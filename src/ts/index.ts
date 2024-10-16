@@ -9,6 +9,8 @@ const API_URL = 'https://api.thecatapi.com/v1/images/search'
 const catList = document.getElementById('catList') as HTMLElement
 const currentPage = 1
 
+const pagination = document.getElementById('pagination') as HTMLElement
+
 const tagInput = document.getElementById('tagInput') as HTMLInputElement
 const addTagButton = document.getElementById(
   'addTagButton',
@@ -148,20 +150,18 @@ const createCatItem = (cat: { id: string; url: string }) => {
   })
 
   if (existingTags.length === 0) {
-    const randomTag = randomTags(3) // 3개의 무작위 태그 생성
+    const randomTag = randomTags(3)
     randomTag.forEach((tag) => {
       const tagElement = createTagElement(tag)
-      tagContainer.appendChild(tagElement) // 카드에 무작위 태그 추가
+      tagContainer.appendChild(tagElement)
     })
-    postTag(cat.id, randomTag) // 로컬 스토리지에 저장
+    postTag(cat.id, randomTag)
   }
 
-  catItem.appendChild(tagContainer) // 태그 컨테이너 추가
+  catItem.appendChild(tagContainer)
   return catItem
 }
 
-// 태그 검색 이벤트 리스너
-// 태그 검색 기능
 const searchCatsByTag = async (tag: string) => {
   // 로컬 스토리지에서 모든 고양이 ID 가져오기
   const allCats = Object.keys(localStorage)
@@ -169,30 +169,35 @@ const searchCatsByTag = async (tag: string) => {
   // 해당 태그가 포함된 고양이 ID 찾기
   const filteredCats = allCats.filter((id) => getTag(id).includes(tag))
 
-  // 고양이 목록 초기화
   catList.innerHTML = ''
 
-  // 각 고양이 ID에 대해 API 호출
+  if (filteredCats.length === 0) {
+    const noCatsMessage = document.createElement('div')
+    noCatsMessage.textContent = '해당 태그를 가진 고양이가 없습니다.'
+    catList.appendChild(noCatsMessage)
+    return
+  }
+
+  // 각 고양이 ID에 대해 카드 생성
   for (const id of filteredCats) {
-    const response = await fetch(`${API_URL}?limit=1&page=0`) // API 호출
-    const catData = await response.json()
-    const catItem = createCatItem(catData[0]) // 고양이 카드 생성
-    catList.appendChild(catItem) // 고양이 카드 추가
+    const catData = await fetch(`https://api.thecatapi.com/v1/images/${id}`)
+    const cat = await catData.json()
+    const catItem = createCatItem(cat)
+    catList.appendChild(catItem)
   }
 }
-
-// 태그 검색 이벤트 리스너
 tagSearchInput.addEventListener('input', (e) => {
   const query = (e.target as HTMLInputElement).value.trim()
 
   if (query) {
-    searchCatsByTag(query) // 검색 함수 호출
+    pagination.classList.add('hidden')
+    searchCatsByTag(query)
   } else {
-    catList.innerHTML = '' // 입력이 없을 때 리스트 초기화
-    createCatCard(currentPage) // 초기 고양이 카드 표시
+    pagination.classList.remove('hidden')
+    catList.innerHTML = ''
+    createCatCard(currentPage)
   }
 })
 
-// 초기 고양이 카드 생성
 createCatCard(currentPage)
 handleLike()
