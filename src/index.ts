@@ -1,3 +1,4 @@
+import { getCats } from './ts/api.js'
 import { handleLike } from './ts/handleLike.js'
 import { randomTags } from './utils/randomTags.js'
 
@@ -5,7 +6,6 @@ const catList = document.getElementById('catList') as HTMLElement
 
 const pagination = document.getElementById('pagination') as HTMLElement
 const currentPage = 1
-const itemsPerPage = 9
 
 const modal = document.getElementById('modal') as HTMLElement
 const closeModalIcon = document.getElementById('closeModalIcon') as HTMLElement
@@ -103,23 +103,6 @@ const updateCatTag = (catId: string) => {
       'border border-gray-300 text-gray-500 rounded-full px-2 py-1 mr-2 mb-2 text-xs'
     if (catItemTagContainer) catItemTagContainer.appendChild(updatedTagElement)
   })
-}
-
-// GET
-const getCats = async (page: number) => {
-  try {
-    loading.classList.remove('hidden')
-    const response = await fetch(
-      `https://api.thecatapi.com/v1/images/search?limit=${itemsPerPage}&page=${page}`,
-    )
-
-    const cats = await response.json()
-    return cats
-  } catch (error) {
-    console.log('고양이 목록 가져오기 실패', error)
-  } finally {
-    loading.classList.add('hidden')
-  }
 }
 
 // 고양이 카드 생성

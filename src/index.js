@@ -7,12 +7,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { getCats } from './ts/api.js';
 import { handleLike } from './ts/handleLike.js';
 import { randomTags } from './utils/randomTags.js';
 const catList = document.getElementById('catList');
 const pagination = document.getElementById('pagination');
 const currentPage = 1;
-const itemsPerPage = 9;
 const modal = document.getElementById('modal');
 const closeModalIcon = document.getElementById('closeModalIcon');
 const modalImage = document.getElementById('modalImage');
@@ -93,21 +93,6 @@ const updateCatTag = (catId) => {
             catItemTagContainer.appendChild(updatedTagElement);
     });
 };
-// GET
-const getCats = (page) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        loading.classList.remove('hidden');
-        const response = yield fetch(`https://api.thecatapi.com/v1/images/search?limit=${itemsPerPage}&page=${page}`);
-        const cats = yield response.json();
-        return cats;
-    }
-    catch (error) {
-        console.log('고양이 목록 가져오기 실패', error);
-    }
-    finally {
-        loading.classList.add('hidden');
-    }
-});
 // 고양이 카드 생성
 const createCatCard = (page) => __awaiter(void 0, void 0, void 0, function* () {
     const cats = yield getCats(page);
