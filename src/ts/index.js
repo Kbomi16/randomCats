@@ -12,6 +12,7 @@ import { handleLike } from './handleLike.js';
 import { openModal } from './modal.js';
 import { updatePagination } from './pagination.js';
 import { randomTags } from '../utils/randomTags.js';
+import { debounce } from '../utils/debounce.js';
 const API_URL = 'https://api.thecatapi.com/v1/images/search';
 const catList = document.getElementById('catList');
 const currentPage = 1;
@@ -160,7 +161,7 @@ const searchCatsByTag = (tag) => __awaiter(void 0, void 0, void 0, function* () 
         catList.appendChild(catItem);
     }
 });
-tagSearchInput.addEventListener('input', (e) => {
+tagSearchInput.addEventListener('input', debounce((e) => {
     const query = e.target.value.trim();
     if (query) {
         pagination.classList.add('hidden');
@@ -171,6 +172,6 @@ tagSearchInput.addEventListener('input', (e) => {
         catList.innerHTML = '';
         createCatCard(currentPage);
     }
-});
+}, 300));
 createCatCard(currentPage);
 handleLike();

@@ -3,6 +3,7 @@ import { handleLike } from './handleLike.js'
 import { openModal } from './modal.js'
 import { updatePagination } from './pagination.js'
 import { randomTags } from '../utils/randomTags.js'
+import { debounce } from '../utils/debounce.js'
 
 const API_URL = 'https://api.thecatapi.com/v1/images/search'
 
@@ -186,18 +187,22 @@ const searchCatsByTag = async (tag: string) => {
     catList.appendChild(catItem)
   }
 }
-tagSearchInput.addEventListener('input', (e) => {
-  const query = (e.target as HTMLInputElement).value.trim()
 
-  if (query) {
-    pagination.classList.add('hidden')
-    searchCatsByTag(query)
-  } else {
-    pagination.classList.remove('hidden')
-    catList.innerHTML = ''
-    createCatCard(currentPage)
-  }
-})
+tagSearchInput.addEventListener(
+  'input',
+  debounce((e) => {
+    const query = (e.target as HTMLInputElement).value.trim()
+
+    if (query) {
+      pagination.classList.add('hidden')
+      searchCatsByTag(query)
+    } else {
+      pagination.classList.remove('hidden')
+      catList.innerHTML = ''
+      createCatCard(currentPage)
+    }
+  }, 300),
+)
 
 createCatCard(currentPage)
 handleLike()
