@@ -9,9 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { getCats } from './ts/api.js';
 import { handleLike } from './ts/handleLike.js';
+import { updatePagination } from './ts/pagination.js';
 import { randomTags } from './utils/randomTags.js';
 const catList = document.getElementById('catList');
-const pagination = document.getElementById('pagination');
 const currentPage = 1;
 const modal = document.getElementById('modal');
 const closeModalIcon = document.getElementById('closeModalIcon');
@@ -144,28 +144,8 @@ const createCatCard = (page) => __awaiter(void 0, void 0, void 0, function* () {
         }
         catList === null || catList === void 0 ? void 0 : catList.appendChild(catItem);
     });
-    updatePagination(page);
+    updatePagination(page, createCatCard);
 });
-// 페이지네이션
-const updatePagination = (currentPage) => {
-    const totalPage = 5;
-    pagination.innerHTML = '';
-    for (let i = 1; i <= totalPage; i++) {
-        const button = document.createElement('button');
-        button.innerText = `${i}`;
-        button.className = `mx-1 px-4 py-2 border border-gray-300 ${i === currentPage
-            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-            : 'text-gray-300 hover:bg-blue-500 transition-all hover:text-white'} rounded`;
-        button.disabled = i === currentPage; // 현재 페이지 버튼 비활성화
-        button.addEventListener('click', () => {
-            if (button.disabled)
-                return;
-            currentPage = i;
-            createCatCard(currentPage);
-        });
-        pagination.appendChild(button);
-    }
-};
 // 모달
 const openModal = (imageUrl, catId, tags) => {
     modalImage.src = imageUrl;
