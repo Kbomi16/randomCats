@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const API_URL = 'https://api.thecatapi.com/v1/images/search';
+import { API_URL } from '../constants/API_URL';
 const loading = document.getElementById('loading');
 const itemsPerPage = 9;
 export const getCats = (page) => __awaiter(void 0, void 0, void 0, function* () {

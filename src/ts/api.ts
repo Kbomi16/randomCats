@@ -1,4 +1,5 @@
-const API_URL = 'https://api.thecatapi.com/v1/images/search'
+import { API_URL } from '../constants/API_URL'
+
 const loading = document.getElementById('loading') as HTMLElement
 
 const itemsPerPage = 9
