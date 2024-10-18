@@ -155,7 +155,7 @@ const searchCatsByTag = (tag) => __awaiter(void 0, void 0, void 0, function* () 
     }
     // 각 고양이 ID에 대해 카드 생성
     for (const id of filteredCats) {
-        const catData = yield fetch(`${API_URL}/images/${id}`);
+        const catData = yield fetch(`${API_URL}/${id}`);
         const cat = yield catData.json();
         const catItem = createCatItem(cat);
         catList.appendChild(catItem);

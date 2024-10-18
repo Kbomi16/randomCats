@@ -181,7 +181,7 @@ const searchCatsByTag = async (tag: string) => {
 
   // 각 고양이 ID에 대해 카드 생성
   for (const id of filteredCats) {
-    const catData = await fetch(`${API_URL}/images/${id}`)
+    const catData = await fetch(`${API_URL}/${id}`)
     const cat = await catData.json()
     const catItem = createCatItem(cat)
     catList.appendChild(catItem)
