@@ -44,7 +44,7 @@
 
 ## 화면 캡쳐
 
-![alt text](image.png)
-![alt text](image-1.png)
-![alt text](image-2.png)
-![alt text](image.png)
+![alt text](/src/assets/image/image.png)
+![alt text](/src/assets/image/image-1.png)
+![alt text](/src/assets/image/image-2.png)
+![alt text](/src/assets/image/image-3.png)
