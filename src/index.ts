@@ -1,11 +1,11 @@
-import { getCats } from './api.js'
-import { handleLike } from './handleLike.js'
-import { openModal } from './modal.js'
-import { updatePagination } from './pagination.js'
-import { randomTags } from '../utils/randomTags.js'
-import { debounce } from '../utils/debounce.js'
+import { getCats } from './ts/api.js'
+import { handleLike } from './ts/handleLike.js'
+import { openModal } from './ts/modal.js'
+import { updatePagination } from './ts/pagination.js'
+import { randomTags } from './utils/randomTags.js'
+import { debounce } from './utils/debounce.js'
 
-const API_URL = 'https://api.thecatapi.com/v1/images/search'
+const API_URL = 'https://api.thecatapi.com/v1/images'
 
 const catList = document.getElementById('catList') as HTMLElement
 const currentPage = 1
@@ -111,11 +111,11 @@ const createCatCard = async (page: number) => {
   catList.innerHTML = ''
 
   cats.slice(0, 9).forEach((cat: { id: string; url: string }) => {
-    const catItem = createCatItem(cat) // 고양이 카드 생성
-    catList.appendChild(catItem) // 카드 추가
+    const catItem = createCatItem(cat)
+    catList.appendChild(catItem)
   })
 
-  updatePagination(page, createCatCard) // 페이지네이션 업데이트
+  updatePagination(page, createCatCard)
 }
 
 // 고양이 카드 생성 함수
@@ -181,7 +181,7 @@ const searchCatsByTag = async (tag: string) => {
 
   // 각 고양이 ID에 대해 카드 생성
   for (const id of filteredCats) {
-    const catData = await fetch(`https://api.thecatapi.com/v1/images/${id}`)
+    const catData = await fetch(`${API_URL}/images/${id}`)
     const cat = await catData.json()
     const catItem = createCatItem(cat)
     catList.appendChild(catItem)

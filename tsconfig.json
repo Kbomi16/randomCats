@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es6",
     "module": "es6",
-    "outDir": "./src",
+    "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
     "noEmit": false,
